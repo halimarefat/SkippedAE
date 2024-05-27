@@ -4,7 +4,20 @@ from torch.utils.data import DataLoader, Dataset
 
 sys_epsilon = sys.float_info.epsilon
 
-class MyDataset(Dataset):
+HEADERS = ["t",                                             # time
+           "X", "Y", "Z",                                   # spacial coordinates
+           "Ux", "Uy", "Uz",                                # velocity components
+           "G1", "G2", "G3", "G4", "G5", "G6",              # velocity gradient tensor components
+           "S1", "S2", "S3", "S4", "S5", "S6",              # strain rate tensor compnents
+           "UUp1", "UUp2", "UUp3", "UUp4", "UUp5", "UUp6",  # resolved Reynolds stress tensor components
+           "Cs"]                                            # Smagorinsky coefficient
+
+M1_HEADERS = ['Ux', 'Uy', 'Uz', 'S1',  'S2', 'S3', 'S4', 'S5', 'S6', 'Cs']
+M2_HEADERS = ['G1', 'G2', 'G3', 'G4', 'G5', 'G6', 'S1',  'S2', 'S3', 'S4', 'S5', 'S6', 'Cs']
+M3_HEADERS = ['Ux', 'Uy', 'Uz', 'UUp1',  'UUp2', 'UUp3', 'UUp4', 'UUp5', 'UUp6', 'Cs']
+M4_HEADERS = ['G1', 'G2', 'G3', 'G4', 'G5', 'G6', 'UUp1',  'UUp2', 'UUp3', 'UUp4', 'UUp5', 'UUp6', 'Cs']
+
+class OFLESDataset(Dataset):
     
     def __init__(self, dataframe):
         self.data = dataframe
@@ -18,3 +31,8 @@ class MyDataset(Dataset):
 
     def __len__(self):
         return len(self.data)
+    
+def R2Score(y_true, y_pred):
+    SS_res = torch.sum(torch.square(y_true - y_pred))
+    SS_tot = torch.var(y_true, unbiased=False) * y_true.size(0)
+    return 1 - SS_res / (SS_tot + 1e-10)

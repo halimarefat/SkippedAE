@@ -2,9 +2,9 @@ import torch
 import torch.nn as nn
 from .blocks import DoubleConv, Down, Up, OutConv
 
-class UNetRegressionNew(nn.Module):
+class skippedAE(nn.Module):
     def __init__(self, in_channels, out_channels, bilinear=True):
-        super(UNetRegressionNew, self).__init__()
+        super(skippedAE, self).__init__()
         self.n_channels = in_channels
         self.n_classes = out_channels
         self.bilinear = bilinear
