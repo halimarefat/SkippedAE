@@ -35,4 +35,4 @@ class OFLESDataset(Dataset):
 def R2Score(y_true, y_pred):
     SS_res = torch.sum(torch.square(y_true - y_pred))
     SS_tot = torch.var(y_true, unbiased=False) * y_true.size(0)
-    return 1 - SS_res / (SS_tot + 1e-10)
+    return 1 - SS_res / (SS_tot + sys_epsilon)

@@ -20,7 +20,6 @@ train_scales = pd.DataFrame(np.reshape(data, (-1, len(HEADERS))), columns=HEADER
 train_norm = pd.read_csv('datasets/normalized/train/fieldData_R3_seen_norm.txt', sep=' ', names=HEADERS)
 train_org = pd.read_csv('datasets/original/train/fieldData_R3_seen.txt', sep=' ', names=HEADERS)
 
-
 M1 = train_norm.filter(M1_HEADERS, axis=1)
 M2 = train_norm.filter(M2_HEADERS, axis=1)
 M3 = train_norm.filter(M3_HEADERS, axis=1)
@@ -33,6 +32,8 @@ learning_rate = 0.001
 num_epochs = 500
 patience = 100
 best_model_path = f'./checkpoints/R103_model_{dt_name}.pt'
+out_channels = 1
+in_channels = dt.shape[1] - out_channels 
 split_sz = 0.8
 batch_sz_trn = 4096
 batch_sz_val = int(batch_sz_trn / 4)
@@ -49,7 +50,7 @@ val_loader = torch.utils.data.DataLoader(dataset=val_dataset, batch_size=batch_s
 
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-model = skippedAE(in_channels=12, out_channels=1, bilinear=True)  
+model = skippedAE(in_channels=in_channels, out_channels=out_channels, bilinear=True)  
 model.to(device)
 model.double()
 criterion = nn.MSELoss()
