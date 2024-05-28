@@ -16,6 +16,11 @@ M1_HEADERS = ['Ux', 'Uy', 'Uz', 'S1',  'S2', 'S3', 'S4', 'S5', 'S6', 'Cs']
 M2_HEADERS = ['G1', 'G2', 'G3', 'G4', 'G5', 'G6', 'S1',  'S2', 'S3', 'S4', 'S5', 'S6', 'Cs']
 M3_HEADERS = ['Ux', 'Uy', 'Uz', 'UUp1',  'UUp2', 'UUp3', 'UUp4', 'UUp5', 'UUp6', 'Cs']
 M4_HEADERS = ['G1', 'G2', 'G3', 'G4', 'G5', 'G6', 'UUp1',  'UUp2', 'UUp3', 'UUp4', 'UUp5', 'UUp6', 'Cs']
+M5_HEADERS = ['Ux', 'Uy', 'Uz', 
+              'G1', 'G2', 'G3', 'G4', 'G5', 'G6', 
+              'S1',  'S2', 'S3', 'S4', 'S5', 'S6', 
+              'UUp1',  'UUp2', 'UUp3', 'UUp4', 'UUp5', 'UUp6', 
+              'Cs']
 
 class OFLESDataset(Dataset):
     
