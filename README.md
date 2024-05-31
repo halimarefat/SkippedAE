@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="/SkipAE.drawio.png" width="350" align="center">
+  <img src="/SkipAE.drawio.png" width="650" align="center">
 </p>
 
 # SkippedAE
