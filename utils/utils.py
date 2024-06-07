@@ -1,8 +1,12 @@
 import sys
 import torch
+import pandas as pd
+import numpy as np
 from torch.utils.data import DataLoader, Dataset
 
 sys_epsilon = sys.float_info.epsilon
+
+MOTHERDIR = '/home/hmarefat/scratch/SkippedAE'
 
 HEADERS = ["t",                                             # time
            "X", "Y", "Z",                                   # spacial coordinates
@@ -41,3 +45,32 @@ def R2Score(y_true, y_pred):
     SS_res = torch.sum(torch.square(y_true - y_pred))
     SS_tot = torch.var(y_true, unbiased=False) * y_true.size(0)
     return 1 - SS_res / (SS_tot + sys_epsilon)
+
+
+def trainDataCollecter(Re):
+    with open(f'{MOTHERDIR}/datasets/coeffs/train/fieldData_{Re}_seen_means.txt', 'r') as file:
+        data = [float(line.strip()) for line in file]
+    means = pd.DataFrame(np.reshape(data, (-1, len(HEADERS))), columns=HEADERS)
+
+    with open(f'{MOTHERDIR}/datasets/coeffs/train/fieldData_{Re}_seen_scales.txt', 'r') as file:
+        data = [float(line.strip()) for line in file]
+    scales = pd.DataFrame(np.reshape(data, (-1, len(HEADERS))), columns=HEADERS)
+
+    norm = pd.read_csv(f'{MOTHERDIR}/datasets/normalized/train/fieldData_{Re}_seen_norm.txt', sep=' ', names=HEADERS)
+    org = pd.read_csv(f'{MOTHERDIR}/datasets/original/train/fieldData_{Re}_seen.txt', sep=' ', names=HEADERS)
+
+    return org, norm, means, scales
+
+def testDataCollecter(Re):
+    with open(f'{MOTHERDIR}/datasets/coeffs/test/fieldData_{Re}_unseen_means.txt', 'r') as file:
+        data = [float(line.strip()) for line in file]
+    means = pd.DataFrame(np.reshape(data, (-1, len(HEADERS))), columns=HEADERS)
+
+    with open(f'{MOTHERDIR}/datasets/coeffs/test/fieldData_{Re}_unseen_scales.txt', 'r') as file:
+        data = [float(line.strip()) for line in file]
+    scales = pd.DataFrame(np.reshape(data, (-1, len(HEADERS))), columns=HEADERS)
+
+    norm = pd.read_csv(f'{MOTHERDIR}/datasets/normalized/test/fieldData_{Re}_unseen_norm.txt', sep=' ', names=HEADERS)
+    org = pd.read_csv(f'{MOTHERDIR}/datasets/original/test/fieldData_{Re}_unseen.txt', sep=' ', names=HEADERS)
+
+    return org, norm, means, scales

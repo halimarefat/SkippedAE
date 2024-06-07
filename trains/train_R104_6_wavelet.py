@@ -6,24 +6,17 @@ import numpy as np
 import pandas as pd
 from tqdm import tqdm
 from torch.optim.lr_scheduler import StepLR
-from utils.utils import OFLESDataset, R2Score, HEADERS
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from utils.utils import OFLESDataset, R2Score, trainDataCollecter, MOTHERDIR
 from model.skippedAE import skippedAE
 from utils.loss import WaveletLoss
 
 Re = 'R4'
 groupName = 'R104'
 
-with open(f'datasets/coeffs/train/fieldData_{Re}_seen_means.txt', 'r') as file:
-    data = [float(line.strip()) for line in file]
-train_means = pd.DataFrame(np.reshape(data, (-1, len(HEADERS))), columns=HEADERS)
-
-with open(f'datasets/coeffs/train/fieldData_{Re}_seen_scales.txt', 'r') as file:
-    data = [float(line.strip()) for line in file]
-train_scales = pd.DataFrame(np.reshape(data, (-1, len(HEADERS))), columns=HEADERS)
-
-train_norm = pd.read_csv(f'datasets/normalized/train/fieldData_{Re}_seen_norm.txt', sep=' ', names=HEADERS)
-train_org = pd.read_csv(f'datasets/original/train/fieldData_{Re}_seen.txt', sep=' ', names=HEADERS)
-
+train_org, train_norm, train_means, train_scales = trainDataCollecter(Re)
 M6 = train_norm
 
 dt = M6
@@ -31,8 +24,8 @@ dt_name = 'M6_wavelet'
 
 learning_rate = 0.001
 num_epochs = 500
-patience = 40
-best_model_path = f'./checkpoints/{groupName}_model_{dt_name}.pt'
+patience = 100
+best_model_path = f'{MOTHERDIR}/checkpoints/{groupName}_model_{dt_name}.pt'
 out_channels = 1
 in_channels = dt.shape[1] - out_channels 
 split_sz = 0.8
@@ -147,15 +140,15 @@ for epoch in range(num_epochs):
 
 print(f"Training complete. \n Best model saved to '{best_model_path}'.")
 
-with open(f"./logs/{groupName}_training_history_{dt_name}.json", "w") as f:
+with open(f"{MOTHERDIR}/logs/{groupName}_training_history_{dt_name}.json", "w") as f:
     json.dump(history, f)
     
-print(f"\n Training history saved to './logs/{groupName}_training_history_{dt_name}.json'")
+print(f"\n Training history saved to '{MOTHERDIR}/logs/{groupName}_training_history_{dt_name}.json'")
 
 data_iter = iter(train_loader)
 next(data_iter)[:,0:-1]
 
 traced_script_module = torch.jit.trace(model, next(data_iter)[:,0:-1].to(device))
-traced_script_module.save(f"./traced/{groupName}_traced_model_{dt_name}.pt")
+traced_script_module.save(f"{MOTHERDIR}/traced/{groupName}_traced_model_{dt_name}.pt")
 
-print(f"Traced model saved to './traced/{groupName}_traced_model_{dt_name}.pt'")
+print(f"Traced model saved to '{MOTHERDIR}/traced/{groupName}_traced_model_{dt_name}.pt'")
