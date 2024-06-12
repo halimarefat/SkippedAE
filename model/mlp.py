@@ -1,4 +1,4 @@
-import toch.nn as nn
+import torch.nn as nn
 
 class mlp(nn.Module):
    

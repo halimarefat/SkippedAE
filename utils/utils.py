@@ -1,3 +1,4 @@
+import os
 import sys
 import torch
 import pandas as pd
@@ -6,7 +7,7 @@ from torch.utils.data import DataLoader, Dataset
 
 sys_epsilon = sys.float_info.epsilon
 
-MOTHERDIR = '/home/hmarefat/scratch/SkippedAE'
+MOTHERDIR = os.path.abspath(os.curdir)
 
 HEADERS = ["t",                                             # time
            "X", "Y", "Z",                                   # spacial coordinates
@@ -32,7 +33,6 @@ class OFLESDataset(Dataset):
         self.data = dataframe
 
     def __getitem__(self, index):
-        # Ensure all indices are valid
         if index < len(self.data):
             return torch.tensor(self.data.iloc[index].values, dtype=torch.float64)
         else:
