@@ -11,13 +11,15 @@ from torch.optim.lr_scheduler import StepLR
 
 from utils.utils import OFLESDataset, R2Score, trainDataCollecter, MOTHERDIR
 from utils.utils import OFLESDataset, R2Score, M1_HEADERS, M2_HEADERS, M3_HEADERS, M4_HEADERS, M5_HEADERS
-from model.skippedAE import skippedAE
+from model.wae import WAE
+from model.mlp import mlp
 from utils.loss import WaveletLoss
 
 wavelet = True
+modelMode = 'WAE' # 'MLP' #
 Re = 'R4'
 Mconf = '2'
-groupName = f'wae_R10{Re[1]}'
+groupName = f'wae_R10{Re[1]}' if modelMode == 'WAE' else f'mlp_R10{Re[1]}'
 dt_name = f'M{Mconf}_wavelet' if wavelet else f'M{Mconf}'
 
 train_org, train_norm, train_means, train_scales = trainDataCollecter(Re)
@@ -44,7 +46,11 @@ train_loader = torch.utils.data.DataLoader(dataset=train_dataset, batch_size=bat
 val_loader = torch.utils.data.DataLoader(dataset=val_dataset, batch_size=batch_sz_val, shuffle=False)
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-model = skippedAE(in_channels=in_channels, out_channels=out_channels, bilinear=True)  
+if modelMode == 'WAE':
+    model = WAE(in_channels=in_channels, out_channels=out_channels, bilinear=True)  
+elif modelMode == 'MLP':
+    model = mlp(input_size=in_channels, output_size=out_channels, hidden_layers=5, neurons_per_layer=[60,60,60,60,60])  
+    
 model.to(device)
 model.double()
 criterion = WaveletLoss(wavelet='db1') if wavelet else nn.MSELoss()

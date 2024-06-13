@@ -8,17 +8,21 @@ from scipy.integrate import trapz
 from tqdm import tqdm
 import os
 import sys
+from pathlib import Path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from utils.utils import OFLESDataset, R2Score, trainDataCollecter, MOTHERDIR, HEADERS, M1_HEADERS, M4_HEADERS, M3_HEADERS, M2_HEADERS
-from model.skippedAE import skippedAE
+from model.wae import WAE
+from model.mlp import mlp
+from utils.loss import WaveletLoss
 
-Re = 'R53'
-groupName = 'R503'
+modelMode = 'WAE'
+Re = 'R4'
+groupName = f'wae_R10{Re[1]}' if modelMode == 'WAE' else f'mlp_R10{Re[1]}'
 dt_names = ['M1', 'M2', 'M3', 'M4']
 
 test_org, test_norm, test_means, test_scales = trainDataCollecter(Re)
 
-print(f'For Re = {groupName[1]} x 10^{groupName[-1]}:')
+print(f'For Re = 10^{Re[-1]}:')
 for dt_name in dt_names:
     print(f'Working on {dt_name}!')
     dt = test_norm.filter(globals()[f"{dt_name}_HEADERS"], axis=1)
@@ -31,7 +35,10 @@ for dt_name in dt_names:
     out_channels = 1
     in_channels = dt.shape[1] - out_channels
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model = skippedAE(in_channels=in_channels, out_channels=out_channels, bilinear=True)  
+    if modelMode == 'WAE':
+        model = WAE(in_channels=in_channels, out_channels=out_channels, bilinear=True)  
+    elif modelMode == 'MLP':
+        model = mlp(input_size=in_channels, output_size=out_channels, hidden_layers=5, neurons_per_layer=[60,60,60,60,60])  
     model.load_state_dict(torch.load(PATH))
     model.eval()
     model.to(device)
@@ -69,6 +76,10 @@ for dt_name in dt_names:
     jpdf = n / trapz(trapz(n, xedges[:-1], axis=0), yedges[:-1])
     X, Y = np.meshgrid(xedges[:-1], yedges[:-1])
 
+    dir = Path(f'{MOTHERDIR}/Results/{groupName}/')
+    if not dir.exists():
+        dir.mkdir(parents=True, exist_ok=True)
+        
     plt.rcParams.update({
         "text.usetex": True,
         "font.family": "Helvetica"
@@ -82,7 +93,7 @@ for dt_name in dt_names:
     plt.ylim([-0.15, 0.15])
 
     plt.tight_layout()
-    plt.savefig(f'{MOTHERDIR}/Results/{groupName}/{groupName}_{dt_name}_jpdf.png')
+    plt.savefig(dir / f'{groupName}_{dt_name}_jpdf.png')
     plt.close()
 
     plt.hist(Cs_true, bins=1000, density=True, alpha=0.6, histtype=u'step', color='blue')
@@ -90,6 +101,6 @@ for dt_name in dt_names:
     plt.xlim([-0.3, 0.3])
     plt.xlabel(r'$C_s$', fontsize=14)
     plt.xlabel('density', fontsize=14)
-    plt.legend(['GT', 'SkipAE'])
-    plt.savefig(f'{MOTHERDIR}/Results/{groupName}/{groupName}_{dt_name}_density.png')
+    plt.legend(['GT', modelMode])
+    plt.savefig(dir / f'{groupName}_{dt_name}_density.png')
     plt.close()

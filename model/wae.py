@@ -2,9 +2,9 @@ import torch
 import torch.nn as nn
 from .blocks import DoubleConv, Down, Up, OutConv
 
-class skippedAE(nn.Module):
+class WAE(nn.Module):
     def __init__(self, in_channels, out_channels, bilinear=True):
-        super(skippedAE, self).__init__()
+        super(WAE, self).__init__()
         self.n_channels = in_channels
         self.n_classes = out_channels
         self.bilinear = bilinear
