@@ -1,4 +1,4 @@
 datasets/*
 checkpoints/*
 logs/*
-traces/*
+traced/*
