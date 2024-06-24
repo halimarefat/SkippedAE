@@ -80,23 +80,21 @@ for dt_name in dt_names:
         Cs_pred_2.append(pred_2.detach().cpu().numpy() * test_scales['Cs'].values + test_means['Cs'].values)
         Cs_true_2.append(label_2.detach().cpu().numpy() * test_scales['Cs'].values + test_means['Cs'].values)
 
-        # Perform sensitivity analysis for each model
         sensitivities_1 = sensitivity_analysis(model_1, features_1)
         sensitivities_2 = sensitivity_analysis(model_2, features_2)
 
-        # Plot sensitivity
         feature_names_1 = globals()[f"{dt_name[0]}_HEADERS"][:-1]  # Excluding the output column
         feature_names_2 = globals()[f"{dt_name[1]}_HEADERS"][:-1]  # Excluding the output column
         colors = ['cyan', 'magenta'] if dt_name in [['M1', 'M3']] else ['red', 'blue']
         labels = dt_name
         plot_sensitivities([feature_names_1, feature_names_2], [sensitivities_1, sensitivities_2], colors, labels, Path(f'{MOTHERDIR}/Results/{groupName}/{dt_name}_sensitivity.png'))
-        break  # Just need one batch for sensitivity analysis
+        break  
     
     Cs_true_1 = np.concatenate(Cs_true_1).ravel()
     Cs_pred_1 = np.concatenate(Cs_pred_1).ravel()
     Cs_true_2 = np.concatenate(Cs_true_2).ravel()
     Cs_pred_2 = np.concatenate(Cs_pred_2).ravel()
 
-    # Bland-Altman plot for each model
+ 
     bland_altman_plot(Cs_true_1, Cs_pred_1, Path(f'{MOTHERDIR}/Results/{groupName}/{dt_name[0]}_bland_altman.png'))
     bland_altman_plot(Cs_true_2, Cs_pred_2, Path(f'{MOTHERDIR}/Results/{groupName}/{dt_name[1]}_bland_altman.png'))
