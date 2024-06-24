@@ -15,10 +15,10 @@ from model.wae import WAE
 from model.mlp import mlp
 from utils.loss import WaveletLoss
 
-wavelet = True
+wavelet = False
 modelMode = 'WAE' # 'MLP' #
 Re = 'R4'
-Mconf = '2'
+Mconf = '3'
 groupName = f'wae_R10{Re[1]}' if modelMode == 'WAE' else f'mlp_R10{Re[1]}'
 dt_name = f'M{Mconf}_wavelet' if wavelet else f'M{Mconf}'
 
@@ -27,7 +27,7 @@ dt = train_norm.filter(globals()[f"{dt_name[:2]}_HEADERS"], axis=1)
 
 learning_rate = 0.001
 num_epochs = 500
-patience = 5
+patience = 60
 best_model_path = f'{MOTHERDIR}/checkpoints/{groupName}_model_{dt_name}.pt'
 out_channels = 1
 in_channels = dt.shape[1] - out_channels 

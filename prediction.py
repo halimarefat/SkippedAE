@@ -10,12 +10,12 @@ import os
 import sys
 from pathlib import Path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from utils.utils import OFLESDataset, R2Score, trainDataCollecter, MOTHERDIR, HEADERS, M1_HEADERS, M4_HEADERS, M3_HEADERS, M2_HEADERS
+from utils.utils import OFLESDataset, R2Score, trainDataCollecter, MOTHERDIR, HEADERS, M1_HEADERS, M4_HEADERS, M3_HEADERS, M2_HEADERS, M6_HEADERS
 from model.wae import WAE
 from model.mlp import mlp
 from utils.loss import WaveletLoss
 
-modelMode = 'WAE'
+modelMode = 'WAE' # 'MLP' #
 Re = 'R4'
 groupName = f'wae_R10{Re[1]}' if modelMode == 'WAE' else f'mlp_R10{Re[1]}'
 dt_names = ['M1', 'M2', 'M3', 'M4']
@@ -84,23 +84,27 @@ for dt_name in dt_names:
         "text.usetex": True,
         "font.family": "Helvetica"
     })
-
+    
     plt.pcolormesh(X, Y, jpdf.T, shading='auto', cmap='jet')
     plt.clim([-4, 54])
     plt.xlabel(r'$C_s$', fontsize=14)
     plt.ylabel(r'$\tilde{C_s}$', fontsize=14)
     plt.xlim([-0.15, 0.15])
     plt.ylim([-0.15, 0.15])
-
     plt.tight_layout()
     plt.savefig(dir / f'{groupName}_{dt_name}_jpdf.png')
     plt.close()
-
+    
+    plt.rcParams.update({
+        "text.usetex": True,
+        "font.family": "Helvetica"
+    })
     plt.hist(Cs_true, bins=1000, density=True, alpha=0.6, histtype=u'step', color='blue')
     plt.hist(Cs_pred, bins=1000, density=True, alpha=0.6, histtype=u'step', color='red')
-    plt.xlim([-0.3, 0.3])
+    plt.xlim([-0.15, 0.15])
+    plt.ylim([0, 85])
     plt.xlabel(r'$C_s$', fontsize=14)
-    plt.xlabel('density', fontsize=14)
+    plt.ylabel(r'density', fontsize=14)
     plt.legend(['GT', modelMode])
     plt.savefig(dir / f'{groupName}_{dt_name}_density.png')
     plt.close()

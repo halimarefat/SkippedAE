@@ -2,15 +2,20 @@ import torch
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-from model.skippedAE import skippedAE
-from utils.utils import MOTHERDIR
+from model.wae import WAE
+from model.mlp import mlp
+from utils.utils import MOTHERDIR, FEATNAMES
 
-def load_model(model_path, in_channels, out_channels, device):
-    model = skippedAE(in_channels=in_channels, out_channels=out_channels, bilinear=True)
+def load_model(modelMode, model_path, in_channels, out_channels, device):
+    if modelMode == 'WAE':
+        model = WAE(in_channels=in_channels, out_channels=out_channels, bilinear=True)  
+    elif modelMode == 'MLP':
+        model = mlp(input_size=in_channels, output_size=out_channels, hidden_layers=5, neurons_per_layer=[60,60,60,60,60])  
     model.load_state_dict(torch.load(model_path))
     model.to(device)
     model.eval()
     model.double()
+    
     return model
 
 def generate_ice_data(model, features, feature_index, device):
@@ -32,8 +37,11 @@ def generate_ice_data(model, features, feature_index, device):
     return feature_values, ice_data
 
 def plot_ice(feature_values, ice_data, feature_name, outfile):
-    plt.figure(figsize=(10, 6))
-    
+    plt.figure(figsize=(3, 6))
+    plt.rcParams.update({
+        "text.usetex": True,
+        "font.family": "Helvetica"
+    })
     for i in range(ice_data.shape[0]):
         plt.plot(feature_values, ice_data[i], color='gray', alpha=0.5)
     
@@ -41,8 +49,6 @@ def plot_ice(feature_values, ice_data, feature_name, outfile):
     plt.plot(feature_values, average_ice, color='yellow', linewidth=2)
     sns.rugplot(x=feature_values, color='black', alpha=0.5)
     
-    plt.xlabel(feature_name)
-    plt.ylabel('Prediction')
-    plt.title(f'ICE plot for {feature_name}')
+    plt.xlabel(FEATNAMES[feature_name], fontsize=14)
     plt.savefig(outfile)
     plt.close()

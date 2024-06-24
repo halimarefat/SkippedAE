@@ -9,6 +9,17 @@ sys_epsilon = sys.float_info.epsilon
 
 MOTHERDIR = os.path.abspath(os.curdir)
 
+FEATNAMES= {"t": r'$t$',                                            
+           "X": r'$x$', "Y": r'$y$', "Z": r'$z$',                                  
+           "Ux": r'$u$', "Uy": r'$v$', "Uz": r'$w$',                               
+           "G1": r'$\mathcal{G}_{xx}$', "G2": r'$\mathcal{G}_{xy}$', "G3": r'$\mathcal{G}_{xz}$', 
+           "G4": r'$\mathcal{G}_{yy}$', "G5": r'$\mathcal{G}_{yz}$', "G6": r'$\mathcal{G}_{zz}$',             
+           "S1": r'$\mathcal{S}_{xx}$', "S2": r'$\mathcal{S}_{xy}$', "S3": r'$\mathcal{S}_{xz}$', 
+           "S4": r'$\mathcal{S}_{yy}$', "S5": r'$\mathcal{S}_{yz}$', "S6": r'$\mathcal{S}_{zz}$',             
+           "UUp1": r'$\tau^{\prime}_{xx}$', "UUp2": r'$\tau^{\prime}_{xy}$', "UUp3": r'$\tau^{\prime}_{xz}$', 
+           "UUp4": r'$\tau^{\prime}_{yy}$', "UUp5": r'$\tau^{\prime}_{yz}$', "UUp6": r'$\tau^{\prime}_{zz}$', 
+           "Cs": r'$C_s$'}                                          
+
 HEADERS = ["t",                                             # time
            "X", "Y", "Z",                                   # spacial coordinates
            "Ux", "Uy", "Uz",                                # velocity components
@@ -22,6 +33,13 @@ M2_HEADERS = ['G1', 'G2', 'G3', 'G4', 'G5', 'G6', 'S1',  'S2', 'S3', 'S4', 'S5',
 M3_HEADERS = ['Ux', 'Uy', 'Uz', 'UUp1',  'UUp2', 'UUp3', 'UUp4', 'UUp5', 'UUp6', 'Cs']
 M4_HEADERS = ['G1', 'G2', 'G3', 'G4', 'G5', 'G6', 'UUp1',  'UUp2', 'UUp3', 'UUp4', 'UUp5', 'UUp6', 'Cs']
 M5_HEADERS = ['Ux', 'Uy', 'Uz', 
+              'G1', 'G2', 'G3', 'G4', 'G5', 'G6', 
+              'S1',  'S2', 'S3', 'S4', 'S5', 'S6', 
+              'UUp1',  'UUp2', 'UUp3', 'UUp4', 'UUp5', 'UUp6', 
+              'Cs']
+M6_HEADERS = ['t',                                            
+              'X', 'Y', 'Z',
+              'Ux', 'Uy', 'Uz', 
               'G1', 'G2', 'G3', 'G4', 'G5', 'G6', 
               'S1',  'S2', 'S3', 'S4', 'S5', 'S6', 
               'UUp1',  'UUp2', 'UUp3', 'UUp4', 'UUp5', 'UUp6', 
@@ -74,3 +92,8 @@ def testDataCollecter(Re):
     org = pd.read_csv(f'{MOTHERDIR}/datasets/original/test/fieldData_{Re}_unseen.txt', sep=' ', names=HEADERS)
 
     return org, norm, means, scales
+
+if __name__ == '__main__':
+    ff = ['t', 'X']
+    
+    print(FEATNAMES[ff[1]])
