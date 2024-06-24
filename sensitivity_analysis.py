@@ -83,8 +83,8 @@ for dt_name in dt_names:
         sensitivities_1 = sensitivity_analysis(model_1, features_1)
         sensitivities_2 = sensitivity_analysis(model_2, features_2)
 
-        feature_names_1 = globals()[f"{dt_name[0]}_HEADERS"][:-1]  # Excluding the output column
-        feature_names_2 = globals()[f"{dt_name[1]}_HEADERS"][:-1]  # Excluding the output column
+        feature_names_1 = globals()[f"{dt_name[0]}_HEADERS"][:-1]  
+        feature_names_2 = globals()[f"{dt_name[1]}_HEADERS"][:-1]  
         colors = ['cyan', 'magenta'] if dt_name in [['M1', 'M3']] else ['red', 'blue']
         labels = dt_name
         plot_sensitivities([feature_names_1, feature_names_2], [sensitivities_1, sensitivities_2], colors, labels, Path(f'{MOTHERDIR}/Results/{groupName}/{dt_name}_sensitivity.png'))
