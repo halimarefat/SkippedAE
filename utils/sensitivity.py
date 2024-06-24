@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from .utils import FEATNAMES
 
 def sensitivity_analysis(model, X, epsilon=1e-4):
     model.eval()
@@ -48,7 +49,7 @@ def plot_sensitivities(features_name, sensitivities, colors, labels, path):
     #plt.axvline(mean_sensitivity_1, color=colors[0], linestyle='--')
     #plt.axvline(mean_sensitivity_2, color=colors[1], linestyle='--')
 
-    plt.yticks(np.arange(total_features), features_name[0] + features_name[1])
+    plt.yticks(np.arange(total_features), FEATNAMES[features_name[0]] + FEATNAMES[features_name[1]])
     plt.xlabel(r'Sensitivity $[\%]$', fontsize=14)
     plt.legend()
     plt.savefig(path)
