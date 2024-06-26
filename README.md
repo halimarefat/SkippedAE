@@ -3,4 +3,4 @@
 </p>
 
 # WAE
-An auto-encoder with skip connections using wavelet loss for subgrid-scale modelling in large eddy simulation 
+An encoder-decoder with skip connections using wavelet loss for subgrid-scale modelling in large eddy simulation.
