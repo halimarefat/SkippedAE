@@ -48,8 +48,13 @@ def plot_sensitivities(features_name, sensitivities, colors, labels, path):
     mean_sensitivity_2 = np.mean(sensitivities[1])
     #plt.axvline(mean_sensitivity_1, color=colors[0], linestyle='--')
     #plt.axvline(mean_sensitivity_2, color=colors[1], linestyle='--')
-
-    plt.yticks(np.arange(total_features), FEATNAMES[features_name[0]] + FEATNAMES[features_name[1]])
+    ylab = []
+    for i in range(n_1):
+        ylab.append(FEATNAMES[features_name[0][i]])
+    for i in range(n_2):
+        ylab.append(FEATNAMES[features_name[1][i]])
+        
+    plt.yticks(np.arange(total_features), ylab, fontsize=14)
     plt.xlabel(r'Sensitivity $[\%]$', fontsize=14)
     plt.legend()
     plt.savefig(path)
